@@ -1,32 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Artistas.Models.DTOs;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebAPI.Data;
 using WebAPI.Models;
+using WebAPI.Models.DTOs;
+using Microsoft.AspNetCore.Authorization;
+using WebAPI.Data;
+using System.Security.Claims;
 
-namespace Artistas.Controllers
+namespace WebAPI.Controllers
 	{
 	[Route("api/[controller]")]
 	[ApiController]
-	public class ArtistasController : ControllerBase
+	[Authorize]
+	public class ArtistaController : ControllerBase
 		{
 		private readonly AppDbContext _context;
 
-		public ArtistasController(AppDbContext context)
+		public ArtistaController(AppDbContext context)
 			{
 			_context = context;
 			}
 
 		// GET: api/Artistas
 		[HttpGet]
-		public ActionResult<List<Artista>> GetArtistas()
+		public ActionResult<List<RespuestaArtistaDTO>> GetArtistas()
 			{
-			return _context.Artistas.ToList();
+			List<Artista> artistas = _context.Artistas
+				.Include(artista => artista.Categoria)
+				.Include(artista => artista.Usuario)
+				.ToList();
+
+			List<RespuestaArtistaDTO> respuestaArtistas = new List<RespuestaArtistaDTO>();
+
+			foreach (Artista artista in artistas)
+				{
+				RespuestaArtistaDTO respuestaArtista = new RespuestaArtistaDTO();
+				respuestaArtista.Id = artista.Id;
+				respuestaArtista.Nombre = artista.Nombre;
+				respuestaArtista.Genero = artista.Genero ?? string.Empty;
+				respuestaArtista.FechaNacimiento = artista.FechaNacimiento.ToString("yyyy-MM-dd");
+				respuestaArtista.Nacionalidad = artista.Nacionalidad ?? string.Empty;
+				respuestaArtista.CategoriaNombre = artista.Categoria.Nombre;
+				respuestaArtista.CategoriaId = artista.CategoriaId ?? 0;
+				respuestaArtista.UsuarioEmail = artista.Usuario?.Email ?? "";
+				respuestaArtista.UsuarioId = artista.UsuarioId ?? 0;
+
+				respuestaArtistas.Add(respuestaArtista);
+				}
+
+			return respuestaArtistas;
 			}
 
 		// GET: api/Artistas/5
@@ -44,15 +65,25 @@ namespace Artistas.Controllers
 			return Ok(artista);
 			}
 
+
 		// POST: api/Artistas
 		[HttpPost]
-		public ActionResult<Artista> PostArtista([FromBody] ArtistaDTO parametrosArtista)
+		public ActionResult<RespuestaArtistaDTO> PostArtista([FromBody] ArtistaDTO parametrosArtista)
 			{
+			string? usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (usuarioId == null || usuarioId == string.Empty)
+				return Unauthorized("No se pudo obtener el Id del usuario autenticado");
+
 			if (parametrosArtista == null)
 				return BadRequest("El cuerpo del request estaba vacio");
 
 			if (ModelState.IsValid == false)
 				return BadRequest(ModelState);
+
+			Usuario? usuario = _context.Usuarios.FirstOrDefault(u => u.Id.ToString() == usuarioId);
+
+			if (usuario == null)
+				return Unauthorized("Usuario no encontrado");
 
 			Categoria? categoria = _context.Categorias.FirstOrDefault(categoria => categoria.Id == parametrosArtista.CategoriaId);
 
@@ -66,10 +97,11 @@ namespace Artistas.Controllers
 
 			artista = new Artista(
 				parametrosArtista.Nombre,
-				parametrosArtista.Genero!,
-				parametrosArtista.FechaNacimiento,
-				parametrosArtista.Nacionalidad!,
-				parametrosArtista.CategoriaId
+				parametrosArtista.Genero,
+				DateOnly.Parse(parametrosArtista.FechaNacimiento),
+				parametrosArtista.Nacionalidad,
+				parametrosArtista.CategoriaId,
+				usuario.Id
 			);
 
 			_context.Artistas.Add(artista);
@@ -77,7 +109,18 @@ namespace Artistas.Controllers
 			try
 				{
 				_context.SaveChanges();
-				return Ok(artista);
+				RespuestaArtistaDTO respuestaArtista = new RespuestaArtistaDTO();
+				respuestaArtista.Id = artista.Id;
+				respuestaArtista.Nombre = artista.Nombre;
+				respuestaArtista.Genero = artista.Genero ?? string.Empty;
+				respuestaArtista.FechaNacimiento = artista.FechaNacimiento.ToString("yyyy-MM-dd");
+				respuestaArtista.Nacionalidad = artista.Nacionalidad ?? string.Empty;
+				respuestaArtista.CategoriaNombre = categoria.Nombre;
+				respuestaArtista.CategoriaId = artista.CategoriaId ?? 0;
+				respuestaArtista.UsuarioEmail = usuario.Email;
+				respuestaArtista.UsuarioId = usuario.Id;
+
+				return Ok(respuestaArtista);
 				}
 			catch (Exception ex)
 				{
@@ -112,7 +155,7 @@ namespace Artistas.Controllers
 
 			artista.Nombre = parametrosArtista.Nombre;
 			artista.Genero = parametrosArtista.Genero;
-			artista.FechaNacimiento = parametrosArtista.FechaNacimiento;
+			artista.FechaNacimiento = DateOnly.Parse(parametrosArtista.FechaNacimiento);
 			artista.Nacionalidad = parametrosArtista.Nacionalidad;
 			artista.CategoriaId = parametrosArtista.CategoriaId;
 
@@ -128,8 +171,6 @@ namespace Artistas.Controllers
 				return BadRequest(ex.Message);
 				}
 			}
-
-
 
 		// DELETE: api/Artistas/5
 		[HttpDelete("{id}")]

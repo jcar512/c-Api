@@ -166,3 +166,5 @@ C:\Users\Joaco\source\repos\WebAPI\WebAPI\obj\Debug\net8.0\refint\WebAPI.dll
 C:\Users\Joaco\source\repos\WebAPI\WebAPI\obj\Debug\net8.0\WebAPI.pdb
 C:\Users\Joaco\source\repos\WebAPI\WebAPI\obj\Debug\net8.0\WebAPI.genruntimeconfig.cache
 C:\Users\Joaco\source\repos\WebAPI\WebAPI\obj\Debug\net8.0\ref\WebAPI.dll
+C:\Users\Joaco\source\repos\WebAPI\WebAPI\obj\Debug\net8.0\WebAPI.sourcelink.json
+C:\Users\Joaco\source\repos\WebAPI\WebAPI\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

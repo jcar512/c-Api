@@ -1,6 +1,4 @@
-using Artistas.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WebAPI.Data;
 using WebAPI.Models;
 using WebAPI.Models.DTOs;
@@ -58,6 +56,8 @@ namespace WebAPI.Controllers
 				parametrosCategoria.Nombre!,
 				parametrosCategoria.Descripcion!
 			);
+
+			_context.Categorias.Add(categoria);
 
 			try
 				{

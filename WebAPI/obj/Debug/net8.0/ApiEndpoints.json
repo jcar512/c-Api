@@ -1,15 +1,15 @@
 [
   {
-    "ContainingType": "Artistas.Controllers.ArtistasController",
+    "ContainingType": "WebAPI.Controllers.ArtistaController",
     "Method": "GetArtistas",
-    "RelativePath": "api/Artistas",
+    "RelativePath": "api/Artista",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[WebAPI.Models.Artista, WebAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.List\u00601[[WebAPI.Models.DTOs.RespuestaArtistaDTO, WebAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -20,22 +20,22 @@
     ]
   },
   {
-    "ContainingType": "Artistas.Controllers.ArtistasController",
+    "ContainingType": "WebAPI.Controllers.ArtistaController",
     "Method": "PostArtista",
-    "RelativePath": "api/Artistas",
+    "RelativePath": "api/Artista",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "parametrosArtista",
-        "Type": "Artistas.Models.DTOs.ArtistaDTO",
+        "Type": "WebAPI.Models.DTOs.ArtistaDTO",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "WebAPI.Models.Artista",
+        "Type": "WebAPI.Models.DTOs.RespuestaArtistaDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -46,9 +46,9 @@
     ]
   },
   {
-    "ContainingType": "Artistas.Controllers.ArtistasController",
+    "ContainingType": "WebAPI.Controllers.ArtistaController",
     "Method": "GetArtista",
-    "RelativePath": "api/Artistas/{id}",
+    "RelativePath": "api/Artista/{id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -72,9 +72,9 @@
     ]
   },
   {
-    "ContainingType": "Artistas.Controllers.ArtistasController",
+    "ContainingType": "WebAPI.Controllers.ArtistaController",
     "Method": "PutArtista",
-    "RelativePath": "api/Artistas/{id}",
+    "RelativePath": "api/Artista/{id}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
@@ -86,7 +86,7 @@
       },
       {
         "Name": "parametrosArtista",
-        "Type": "Artistas.Models.DTOs.ArtistaDTO",
+        "Type": "WebAPI.Models.DTOs.ArtistaDTO",
         "IsRequired": true
       }
     ],
@@ -103,9 +103,9 @@
     ]
   },
   {
-    "ContainingType": "Artistas.Controllers.ArtistasController",
+    "ContainingType": "WebAPI.Controllers.ArtistaController",
     "Method": "DeleteArtista",
-    "RelativePath": "api/Artistas/{id}",
+    "RelativePath": "api/Artista/{id}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
@@ -248,6 +248,58 @@
     "ReturnTypes": [
       {
         "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "WebAPI.Controllers.UsuariosController",
+    "Method": "PostUsuario",
+    "RelativePath": "api/Usuarios",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "registroUsuarioDTO",
+        "Type": "WebAPI.Models.DTOs.RegistroUsuarioDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "WebAPI.Models.Usuario",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "WebAPI.Controllers.UsuariosController",
+    "Method": "PostLogin",
+    "RelativePath": "api/Usuarios/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "loginUsuarioDTO",
+        "Type": "WebAPI.Models.DTOs.LoginUsuarioDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "WebAPI.Models.Usuario",
         "MediaTypes": [
           "text/plain",
           "application/json",
