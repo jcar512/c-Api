@@ -13,8 +13,8 @@ namespace WebAPI.Models
 		public int? CategoriaId { get; set; }
 		public Categoria? Categoria { get; set; }
 		public int? UsuarioId { get; set; }
-		public Usuario Usuario { get; set; }
-		public List<ArtistasEspectaculo> ArtistasEspectaculo { get; set; }
+		public Usuario Usuario { get; set; } = new Usuario();
+		public List<Espectaculo> Espectaculos { get; set; } = new List<Espectaculo>();
 
 		public Artista() { }
 		public Artista(string nombre, string genero, DateOnly fechaNacimiento, string nacionalidad, int categoriaId, int usuarioId)

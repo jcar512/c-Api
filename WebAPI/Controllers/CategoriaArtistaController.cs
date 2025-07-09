@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using WebAPI.Data;
 using WebAPI.Models;
 using WebAPI.Models.DTOs;
@@ -17,9 +19,25 @@ namespace WebAPI.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult<List<Categoria>> GetCategorias()
+		public ActionResult<List<RespuestaCategoriaDTO>> GetCategorias()
 		{
-			return _context.Categorias.ToList();
+			List<Categoria> categorias = _context.Categorias
+				.Include(categoria => categoria.Artistas)
+				.ToList();
+
+			List<RespuestaCategoriaDTO> respuestaCategorias = new List<RespuestaCategoriaDTO> ();
+
+			foreach (Categoria categoria in categorias)
+				{
+				RespuestaCategoriaDTO respuestaCategoria = new RespuestaCategoriaDTO();
+				respuestaCategoria.Id = categoria.Id;
+				respuestaCategoria.Nombre = categoria.Nombre;
+				respuestaCategoria.Descripcion = categoria.Descripcion;
+
+				respuestaCategorias.Add(respuestaCategoria);
+				}
+
+			return respuestaCategorias;				
 		}
 
 
@@ -39,7 +57,7 @@ namespace WebAPI.Controllers
 
 		// POST: api/Categoria
 		[HttpPost]
-		public ActionResult<Categoria> PostCategoria([FromBody] CategoriaDTO parametrosCategoria)
+		public ActionResult<RespuestaCategoriaDTO> PostCategoria([FromBody] CategoriaDTO parametrosCategoria)
 		{
 			if (parametrosCategoria == null)
 				return BadRequest("El cuerpo del request estaba vacio");
@@ -62,7 +80,13 @@ namespace WebAPI.Controllers
 			try
 				{
 				_context.SaveChanges();
-				return Ok(categoria);
+
+				RespuestaCategoriaDTO respuestaCategoria = new RespuestaCategoriaDTO();
+				respuestaCategoria.Id = categoria.Id;
+				respuestaCategoria.Nombre = categoria.Nombre ?? string.Empty;
+				respuestaCategoria.Descripcion = categoria.Descripcion ?? string.Empty;
+
+				return Ok(respuestaCategoria);
 				}
 			catch (Exception ex)
 				{
@@ -72,7 +96,7 @@ namespace WebAPI.Controllers
 
 		// PUT: api/Categoria/5
 		[HttpPut("{id}")]
-		public ActionResult<Categoria> PutCategoria(int id, [FromBody] CategoriaDTO parametrosCategoria)
+		public ActionResult<RespuestaCategoriaDTO> PutCategoria(int id, [FromBody] CategoriaDTO parametrosCategoria)
 			{
 			if (parametrosCategoria == null)
 				return BadRequest("El cuerpo del request estaba vacio");
@@ -95,10 +119,15 @@ namespace WebAPI.Controllers
 
 			try
 				{
-
 				_context.Categorias.Update(categoria);
 				_context.SaveChanges();
-				return Ok(categoria);
+
+				RespuestaCategoriaDTO respuestaCategoria = new RespuestaCategoriaDTO();
+				respuestaCategoria.Id = categoria.Id;
+				respuestaCategoria.Nombre = categoria.Nombre ?? string.Empty;
+				respuestaCategoria.Descripcion = categoria.Descripcion ?? string.Empty;
+
+				return Ok(respuestaCategoria);
 				}
 			catch (Exception ex)
 				{
