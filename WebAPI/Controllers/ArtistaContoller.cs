@@ -24,16 +24,15 @@ namespace WebAPI.Controllers
 		[HttpGet]
 		public ActionResult<List<RespuestaArtistaDTO>> GetArtistas()
 			{
-			List<Artista> artistas = _context.Artistas
+			List<Artista> artistas = [.. _context.Artistas
 				.Include(artista => artista.Categoria)
-				.Include(artista => artista.Usuario)
-				.ToList();
+				.Include(artista => artista.Usuario)];   
 
-			List<RespuestaArtistaDTO> respuestaArtistas = new List<RespuestaArtistaDTO>();
+			List<RespuestaArtistaDTO> respuestaArtistas = [];
 
 			foreach (Artista artista in artistas)
 				{
-				RespuestaArtistaDTO respuestaArtista = new RespuestaArtistaDTO()
+				RespuestaArtistaDTO respuestaArtista = new ()
 				{
 				Id = artista.Id,
 				Nombre = artista.Nombre,
@@ -49,22 +48,43 @@ namespace WebAPI.Controllers
 				respuestaArtistas.Add(respuestaArtista);
 				}
 
+			if (artistas.Count == 0)
+				{
+				return NotFound("No se encontro ningun artista");
+				}
+
 			return respuestaArtistas;
 			}
 
 		// GET: api/Artistas/5
 		[HttpGet("{id}")]
-		public ActionResult<Artista> GetArtista(int id)
+		public ActionResult<RespuestaArtistaDTO> GetArtista(int id)
 			{
 			if (id <= 0)
 				return BadRequest("Id no puede ser menor o igual a cero");
 
-			Artista? artista = _context.Artistas.FirstOrDefault(artista => artista.Id == id);
+			Artista? artista = _context.Artistas
+				.Include(artista => artista.Categoria)
+				.Include(artista => artista.Usuario)
+				.FirstOrDefault(artista => artista.Id == id);
 
 			if (artista == null)
 				return NotFound($"Artista con Id ({id}) no fue encontrado");
 
-			return Ok(artista);
+			RespuestaArtistaDTO respuestaArtista = new ()
+				{
+				Id = artista.Id,
+				Nombre = artista.Nombre,
+				Genero = artista.Genero ?? string.Empty,
+				FechaNacimiento = artista.FechaNacimiento.ToString("yyyy-MM-dd"),
+				Nacionalidad = artista.Nacionalidad ?? string.Empty,
+				CategoriaNombre = artista.Categoria!.Nombre ?? string.Empty,
+				CategoriaId = artista.CategoriaId ?? 0,
+				UsuarioEmail = artista.Usuario!.Email,
+				UsuarioId = artista.Usuario.Id
+				};
+
+			return Ok(respuestaArtista);
 			}
 
 
@@ -112,7 +132,7 @@ namespace WebAPI.Controllers
 				{
 				_context.SaveChanges();
 
-				RespuestaArtistaDTO respuestaArtista = new RespuestaArtistaDTO()
+				RespuestaArtistaDTO respuestaArtista = new ()
 					{
 					Id = artista.Id,
 					Nombre = artista.Nombre,
@@ -216,6 +236,8 @@ namespace WebAPI.Controllers
 			try
 				{
 				_context.Artistas.Remove(artista);
+				_context.SaveChanges();
+
 				return Ok(true);
 				}
 			catch (Exception ex)

@@ -31,8 +31,8 @@ namespace WebAPI.Controllers
 				return BadRequest("Ya existe un usuario con ese email");
 
 			usuario = new Usuario(
-				registroUsuarioDTO.Email,
-				registroUsuarioDTO.Password
+				registroUsuarioDTO.Email!,
+				registroUsuarioDTO.Password!
 			);
 
 			_context.Usuarios.Add(usuario);

@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebAPI.Models
 	{
 		public class Artista
 		{
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int Id { get; set; }
 		[Required]
 		public string Nombre { get; set; } = string.Empty;
@@ -13,7 +15,7 @@ namespace WebAPI.Models
 		public int? CategoriaId { get; set; }
 		public Categoria? Categoria { get; set; }
 		public int? UsuarioId { get; set; }
-		public Usuario Usuario { get; set; } = new Usuario();
+		public Usuario? Usuario { get; set; }
 		public List<Espectaculo> Espectaculos { get; set; } = new List<Espectaculo>();
 
 		public Artista() { }

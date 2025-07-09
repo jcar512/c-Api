@@ -6,9 +6,12 @@ namespace WebAPI.Models.DTOs
 		{
 		[Required]
 		public string Nombre { get; set; } = string.Empty;
+
 		[Required]
-		public DateOnly Fecha { get; set; }	
+		[DataType(DataType.Date)]
+		public string Fecha { get; set; } = string.Empty;
+
 		[Required]
-		public int ArtistaId { get; set; }
+		public int ArtistaId { get; set; } = 0;
 		}
 	}

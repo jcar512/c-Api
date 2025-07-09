@@ -21,20 +21,25 @@ namespace WebAPI.Controllers
 		[HttpGet]
 		public ActionResult<List<RespuestaCategoriaDTO>> GetCategorias()
 		{
-			List<Categoria> categorias = _context.Categorias
-				.Include(categoria => categoria.Artistas)
-				.ToList();
+			List<Categoria> categorias = [.. _context.Categorias];
 
-			List<RespuestaCategoriaDTO> respuestaCategorias = new List<RespuestaCategoriaDTO> ();
+			List<RespuestaCategoriaDTO> respuestaCategorias = [];
 
 			foreach (Categoria categoria in categorias)
 				{
-				RespuestaCategoriaDTO respuestaCategoria = new RespuestaCategoriaDTO();
-				respuestaCategoria.Id = categoria.Id;
-				respuestaCategoria.Nombre = categoria.Nombre;
-				respuestaCategoria.Descripcion = categoria.Descripcion;
+				RespuestaCategoriaDTO respuestaCategoria = new()
+					{
+					Id = categoria.Id,
+					Nombre = categoria.Nombre ?? string.Empty,
+					Descripcion = categoria.Descripcion ?? string.Empty
+					};
 
 				respuestaCategorias.Add(respuestaCategoria);
+				}
+
+			if (categorias.Count == 0)
+				{
+				return NotFound("No se encontro ninguna categoria");
 				}
 
 			return respuestaCategorias;				
@@ -42,7 +47,7 @@ namespace WebAPI.Controllers
 
 
 		[HttpGet("{id}")]
-		public ActionResult<Categoria> GetCategoria(int id)
+		public ActionResult<RespuestaCategoriaDTO> GetCategoria(int id)
 		{
 			if (id <= 0)
 				return BadRequest("Id no puede ser menor o igual a cero");
@@ -52,7 +57,14 @@ namespace WebAPI.Controllers
 			if (categoria == null)
 				return NotFound($"Categoria con Id ({id}) no fue encontrada");
 
-			return Ok(categoria);
+			RespuestaCategoriaDTO respuestaCategoria = new()
+				{
+				Id = categoria.Id,
+				Nombre = categoria.Nombre ?? string.Empty,
+				Descripcion = categoria.Descripcion ?? string.Empty
+				};
+
+			return Ok(respuestaCategoria);
 		}
 
 		// POST: api/Categoria
@@ -149,6 +161,8 @@ namespace WebAPI.Controllers
 			try
 				{
 				_context.Categorias.Remove(categoria);
+				_context.SaveChanges();
+
 				return Ok(true);
 				}
 			catch (Exception ex)

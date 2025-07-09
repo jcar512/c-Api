@@ -1,12 +1,20 @@
-﻿using System.Security.Cryptography;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace WebAPI.Models
 	{
 	public class Usuario
 		{
+
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int Id { get; set; }
+
+		[Required]
 		public string Email { get; set; }
+		[Required]
 		public string PasswordEncriptado { get; set; }
 		public List<Artista> Artistas { get; set; } = new List<Artista>();
 
