@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebAPI.Data;
 
@@ -11,9 +12,11 @@ using WebAPI.Data;
 namespace WebAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250709232610_espectaculo_index_nombre")]
+    partial class espectaculo_index_nombre
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -102,17 +105,12 @@ namespace WebAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ArtistaId");
 
                     b.HasIndex("Nombre")
                         .IsUnique();
-
-                    b.HasIndex("UsuarioId");
 
                     b.ToTable("Espectaculos", (string)null);
                 });
@@ -166,15 +164,7 @@ namespace WebAPI.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("WebAPI.Models.Usuario", "Usuario")
-                        .WithMany("Espectaculos")
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.Navigation("Artista");
-
-                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("WebAPI.Models.Artista", b =>
@@ -190,8 +180,6 @@ namespace WebAPI.Migrations
             modelBuilder.Entity("WebAPI.Models.Usuario", b =>
                 {
                     b.Navigation("Artistas");
-
-                    b.Navigation("Espectaculos");
                 });
 #pragma warning restore 612, 618
         }

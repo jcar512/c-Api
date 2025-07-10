@@ -14,12 +14,17 @@ namespace WebAPI.Models
 		[Required]
 		public int ArtistaId { get; set; }
 		public Artista? Artista { get; set; }
+
+		public int UsuarioId { get; set; }
+		public Usuario? Usuario { get; set; }
+		
 		public Espectaculo() { }
-		public Espectaculo(string nombre, DateOnly fecha, int artistaId)
+		public Espectaculo(string nombre, DateOnly fecha, int artistaId, int usuarioId)
 			{
 			Nombre = nombre;
 			Fecha = fecha;
 			ArtistaId = artistaId;
+			UsuarioId = usuarioId;
 			}
 		}
 	}

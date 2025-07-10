@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
+using WebAPI.Migrations;
 using WebAPI.Models;
 
 namespace WebAPI.Data
@@ -25,10 +27,16 @@ namespace WebAPI.Data
 				.OnDelete(DeleteBehavior.NoAction);
 
 			modelBuilder.Entity<Usuario>()
+				.HasMany(usuario => usuario.Espectaculos)
+				.WithOne(espectaculo => espectaculo.Usuario)
+				.HasForeignKey(espectaculo => espectaculo.UsuarioId)
+				.OnDelete(DeleteBehavior.NoAction);
+
+			modelBuilder.Entity<Usuario>()
 				.HasMany(usuario => usuario.Artistas)
 				.WithOne(artista => artista.Usuario)
 				.HasForeignKey(artista => artista.UsuarioId)
-		    	.OnDelete(DeleteBehavior.NoAction);						
+		    	.OnDelete(DeleteBehavior.NoAction);	
 			
 			modelBuilder.Entity<Artista>()
 				.HasMany(artista => artista.Espectaculos)
@@ -48,6 +56,10 @@ namespace WebAPI.Data
 
 			modelBuilder.Entity<Categoria>()
 				.HasIndex(categoria => categoria.Nombre)
+				.IsUnique();
+
+			modelBuilder.Entity<Espectaculo>()
+				.HasIndex(espectaculo => espectaculo.Nombre)
 				.IsUnique();
 
 			modelBuilder.Entity<Usuario>()

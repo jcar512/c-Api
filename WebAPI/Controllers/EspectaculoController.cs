@@ -4,6 +4,7 @@ using WebAPI.Models;
 using WebAPI.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using WebAPI.Data;
+using System.Security.Claims;
 
 namespace WebAPI.Controllers
 	{
@@ -23,7 +24,8 @@ namespace WebAPI.Controllers
 		public ActionResult<List<RespuestaEspectaculoDTO>> GetEspectaculos()
 			{
 			List<Espectaculo> espectaculos = [.. _context.Espectaculos
-				.Include(espectaculo => espectaculo.Artista)];
+				.Include(espectaculo => espectaculo.Artista)
+				.Include(espectaculo => espectaculo.Usuario)];
 
 			List<RespuestaEspectaculoDTO> respuestaEspectaculos = [];
 
@@ -36,6 +38,7 @@ namespace WebAPI.Controllers
 					Fecha = espectaculo.Fecha.ToString("yyyy-MM-dd"),
 					ArtistaId = espectaculo.ArtistaId,
 					NombreArtista = espectaculo.Artista.Nombre,
+					UsuarioId = espectaculo.UsuarioId,
 					};
 
 				respuestaEspectaculos.Add(respuestaEspectaculo);
@@ -60,6 +63,7 @@ namespace WebAPI.Controllers
 
 			Espectaculo? espectaculo = _context.Espectaculos
 				.Include(espectaculo => espectaculo.Artista)
+				.Include(espectaculo => espectaculo.Usuario)
 				.FirstOrDefault(espectaculo => espectaculo.Id == id);
 
 			if (espectaculo == null)
@@ -74,6 +78,7 @@ namespace WebAPI.Controllers
 				Fecha = espectaculo.Fecha.ToString("yyyy-MM-dd"),
 				ArtistaId = espectaculo.ArtistaId,
 				NombreArtista = espectaculo.Artista!.Nombre,
+				UsuarioId = espectaculo.UsuarioId,
 				};
 
 			return Ok(respuestaEspectaculo);
@@ -82,6 +87,10 @@ namespace WebAPI.Controllers
 		[HttpPost]
 		public ActionResult<RespuestaEspectaculoDTO> PostEspectaculo([FromBody] EspectaculoDTO parametros)
 			{
+			string? usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (usuarioId == null || usuarioId == string.Empty)
+				return Unauthorized("No se pudo obtener el Id del usuario autenticado");
+
 			if (parametros == null)
 				{
 				return BadRequest("El cuerpo del request esta vacio");
@@ -113,6 +122,7 @@ namespace WebAPI.Controllers
 				Nombre = parametros.Nombre,
 				Fecha = DateOnly.Parse(parametros.Fecha),
 				ArtistaId = parametros.ArtistaId,
+				UsuarioId = Int32.Parse(usuarioId),
 				};
 
 			_context.Espectaculos.Add(espectaculoNuevo);
@@ -128,6 +138,7 @@ namespace WebAPI.Controllers
 					Fecha = espectaculoNuevo.Fecha.ToString("yyyy-MM-dd"),
 					ArtistaId = espectaculoNuevo.ArtistaId,
 					NombreArtista = artista.Nombre,
+					UsuarioId = Int32.Parse(usuarioId),
 					};
 
 				return Ok(respuestaEspectaculo);

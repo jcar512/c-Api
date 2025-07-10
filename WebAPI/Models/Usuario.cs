@@ -18,6 +18,8 @@ namespace WebAPI.Models
 		public string PasswordEncriptado { get; set; }
 		public List<Artista> Artistas { get; set; } = new List<Artista>();
 
+		public List<Espectaculo> Espectaculos { get; set; } = new List<Espectaculo>();
+
 		public Usuario() { }
 		public Usuario(string email, string passwordSinEncriptar)
 			{
